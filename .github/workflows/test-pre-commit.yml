@@ -1,0 +1,32 @@
+jobs:
+  test-hooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure git safedir properly
+        run: git config --global --add safe.directory "$(pwd)"
+      - name: Fake update file
+        run: git mv tests/python_simple.py python_simple.py
+      - name: Test khulnasoft pre-commit hook
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: khulnasoft --hook-stage manual --files python_simple.py
+      - name: Test khulnasoft-ci pre-commit hook
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: khulnasoft-ci --hook-stage manual --files python_simple.py
+      - name: Test khulnasoft-docker-develop pre-commit hook
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: khulnasoft-docker-develop --hook-stage manual --files python_simple.py
+      - name: Test khulnasoft-docker pre-commit hook
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: khulnasoft-docker --hook-stage manual --files python_simple.py
+
+name: pre-commit-hook-test
+on:
+  pull_request: null
+  push:
+    branches:
+      - develop
