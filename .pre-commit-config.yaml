@@ -5,7 +5,7 @@ default_stages: [manual]
 
 repos:
   - repo: https://github.com/khulnasoft/pre-commit
-    rev: 'main'
+    rev: 'develop'
     hooks:
       - id: khulnasoft
         name: Pre-commit khulnasoft
