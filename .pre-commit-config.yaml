@@ -1,0 +1,21 @@
+# These hooks are meant to be triggered in CI to test the pre-commit hooks,
+# so rather than triggering at every commit, including locally, they are triggered
+# whenever the test-hooks CI workflow is run.
+default_stages: [manual]
+
+repos:
+  - repo: https://github.com/khulnasoft/pre-commit
+    rev: 'main'
+    hooks:
+      - id: khulnasoft
+        name: Pre-commit khulnasoft
+        args: ["--config", "tests/python_simple.yml"]
+      - id: khulnasoft-ci
+        name: Pre-commit khulnasoft-ci
+        args: ["--config", "tests/python_simple.yml"]
+      - id: khulnasoft-docker-develop
+        name: Pre-commit khulnasoft-docker-develop
+        args: ["--config", "tests/python_simple.yml"]
+      - id: khulnasoft-docker
+        name: Pre-commit khulnasoft-docker
+        args: ["--config", "tests/python_simple.yml"]
