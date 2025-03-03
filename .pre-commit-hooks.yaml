@@ -1,0 +1,42 @@
+# This hook does not use 'docker_image' like the one below, and so is
+# significantly faster (especially on macOS).
+- id: khulnasoft
+  name: khulnasoft
+  entry: khulnasoft
+  # language: python here provides pip as a dep for the hook, as pre-commit
+  # installs tools in local environments.
+  #
+  # If you use `language: python`, then pre-commit expects a toplevel setup.py.
+  # Here, setup.py essentially is just `pip install khulnasoft==0.xxx.yyy`.
+  language: python
+  args: ["--disable-version-check", "--quiet", "--skip-unknown-extensions"]
+
+- id: khulnasoft-ci
+  name: khulnasoft
+  entry: khulnasoft
+  # See above about why we need this
+  language: python
+  # Needed as ci command does not accept filenames as parameters
+  pass_filenames: false
+  args: ["ci", "--dry-run", "--baseline-commit", "HEAD"]
+
+# docker-based hooks, to use the bleeding edge Khulnasoft!
+- id: khulnasoft-docker-develop
+  name: khulnasoft
+  description: This hook runs khulnasoft:develop
+  # See https://pre-commit.com/#docker_image for more information
+  language: docker_image
+  # Need to set KHULNASOFT_LOG_FILE and KHULNASOFT_VERSION_CACHE_PATH since
+  # pre-commit runs docker images with -u set to non-root uid which doesnt have
+  # permissions to default path /.khulnasoft
+  # alt: we could also fallback to use /tmp/ if we can't write to /.khulnasoft in
+  # the Python code.
+  entry: -e KHULNASOFT_LOG_FILE=/tmp/out.log -e KHULNASOFT_VERSION_CACHE_PATH=/tmp/cache khulnasoft/khulnasoft:develop khulnasoft
+
+# using latest instead
+- id: khulnasoft-docker
+  name: khulnasoft
+  description: This hook runs khulnasoft (a.k.a. khulnasoft:latest)
+  language: docker_image
+  # See the comment above for why we set those KHULNASOFT_XXX variables
+  entry: -e KHULNASOFT_LOG_FILE=/tmp/out.log -e KHULNASOFT_VERSION_CACHE_PATH=/tmp/cache khulnasoft/khulnasoft:latest khulnasoft
